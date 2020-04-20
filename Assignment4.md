@@ -67,39 +67,11 @@ NS_m0_pc <- brm(
   prior = NS_prior0,
   sample_prior = "only",
   chains = 2,
-  cores = 2
+  cores = 2,
+  seed = seed,
+  file="NS_m0_pc"
 )
-```
 
-    ## Compiling the C++ model
-
-    ## Trying to compile a simple C file
-
-    ## Running /Library/Frameworks/R.framework/Resources/bin/R CMD SHLIB foo.c
-    ## clang -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG   -I"/Library/Frameworks/R.framework/Versions/3.6/Resources/library/Rcpp/include/"  -I"/Library/Frameworks/R.framework/Versions/3.6/Resources/library/RcppEigen/include/"  -I"/Library/Frameworks/R.framework/Versions/3.6/Resources/library/RcppEigen/include/unsupported"  -I"/Library/Frameworks/R.framework/Versions/3.6/Resources/library/BH/include" -I"/Library/Frameworks/R.framework/Versions/3.6/Resources/library/StanHeaders/include/src/"  -I"/Library/Frameworks/R.framework/Versions/3.6/Resources/library/StanHeaders/include/"  -I"/Library/Frameworks/R.framework/Versions/3.6/Resources/library/rstan/include" -DEIGEN_NO_DEBUG  -D_REENTRANT  -DBOOST_DISABLE_ASSERTS -DBOOST_PENDING_INTEGER_LOG2_HPP -include stan/math/prim/mat/fun/Eigen.hpp   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -c foo.c -o foo.o
-    ## In file included from <built-in>:1:
-    ## In file included from /Library/Frameworks/R.framework/Versions/3.6/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:13:
-    ## In file included from /Library/Frameworks/R.framework/Versions/3.6/Resources/library/RcppEigen/include/Eigen/Dense:1:
-    ## In file included from /Library/Frameworks/R.framework/Versions/3.6/Resources/library/RcppEigen/include/Eigen/Core:88:
-    ## /Library/Frameworks/R.framework/Versions/3.6/Resources/library/RcppEigen/include/Eigen/src/Core/util/Macros.h:613:1: error: unknown type name 'namespace'
-    ## namespace Eigen {
-    ## ^
-    ## /Library/Frameworks/R.framework/Versions/3.6/Resources/library/RcppEigen/include/Eigen/src/Core/util/Macros.h:613:16: error: expected ';' after top level declarator
-    ## namespace Eigen {
-    ##                ^
-    ##                ;
-    ## In file included from <built-in>:1:
-    ## In file included from /Library/Frameworks/R.framework/Versions/3.6/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:13:
-    ## In file included from /Library/Frameworks/R.framework/Versions/3.6/Resources/library/RcppEigen/include/Eigen/Dense:1:
-    ## /Library/Frameworks/R.framework/Versions/3.6/Resources/library/RcppEigen/include/Eigen/Core:96:10: fatal error: 'complex' file not found
-    ## #include <complex>
-    ##          ^~~~~~~~~
-    ## 3 errors generated.
-    ## make: *** [foo.o] Error 1
-
-    ## Start sampling
-
-``` r
 pp_check(NS_m0_pc, nsamples=100)
 ```
 
@@ -113,38 +85,10 @@ NS_m0 <- brm(
   prior = NS_prior0,
   sample_prior = T,
   chains = 2,
-  cores = 2
+  cores = 2,
+  #seed = seed,
+  file="NS_m0_malate.rds"
 )
-```
-
-    ## Compiling the C++ model
-    ## Trying to compile a simple C file
-
-    ## Running /Library/Frameworks/R.framework/Resources/bin/R CMD SHLIB foo.c
-    ## clang -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG   -I"/Library/Frameworks/R.framework/Versions/3.6/Resources/library/Rcpp/include/"  -I"/Library/Frameworks/R.framework/Versions/3.6/Resources/library/RcppEigen/include/"  -I"/Library/Frameworks/R.framework/Versions/3.6/Resources/library/RcppEigen/include/unsupported"  -I"/Library/Frameworks/R.framework/Versions/3.6/Resources/library/BH/include" -I"/Library/Frameworks/R.framework/Versions/3.6/Resources/library/StanHeaders/include/src/"  -I"/Library/Frameworks/R.framework/Versions/3.6/Resources/library/StanHeaders/include/"  -I"/Library/Frameworks/R.framework/Versions/3.6/Resources/library/rstan/include" -DEIGEN_NO_DEBUG  -D_REENTRANT  -DBOOST_DISABLE_ASSERTS -DBOOST_PENDING_INTEGER_LOG2_HPP -include stan/math/prim/mat/fun/Eigen.hpp   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -c foo.c -o foo.o
-    ## In file included from <built-in>:1:
-    ## In file included from /Library/Frameworks/R.framework/Versions/3.6/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:13:
-    ## In file included from /Library/Frameworks/R.framework/Versions/3.6/Resources/library/RcppEigen/include/Eigen/Dense:1:
-    ## In file included from /Library/Frameworks/R.framework/Versions/3.6/Resources/library/RcppEigen/include/Eigen/Core:88:
-    ## /Library/Frameworks/R.framework/Versions/3.6/Resources/library/RcppEigen/include/Eigen/src/Core/util/Macros.h:613:1: error: unknown type name 'namespace'
-    ## namespace Eigen {
-    ## ^
-    ## /Library/Frameworks/R.framework/Versions/3.6/Resources/library/RcppEigen/include/Eigen/src/Core/util/Macros.h:613:16: error: expected ';' after top level declarator
-    ## namespace Eigen {
-    ##                ^
-    ##                ;
-    ## In file included from <built-in>:1:
-    ## In file included from /Library/Frameworks/R.framework/Versions/3.6/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:13:
-    ## In file included from /Library/Frameworks/R.framework/Versions/3.6/Resources/library/RcppEigen/include/Eigen/Dense:1:
-    ## /Library/Frameworks/R.framework/Versions/3.6/Resources/library/RcppEigen/include/Eigen/Core:96:10: fatal error: 'complex' file not found
-    ## #include <complex>
-    ##          ^~~~~~~~~
-    ## 3 errors generated.
-    ## make: *** [foo.o] Error 1
-
-    ## Start sampling
-
-``` r
 pp_check(NS_m0, nsamples=100)
 ```
 
@@ -163,7 +107,7 @@ hypothesis(NS_m0, "DiagnosisTD < 0")
 
     ## Hypothesis Tests for class b:
     ##          Hypothesis Estimate Est.Error CI.Lower CI.Upper Evid.Ratio Post.Prob
-    ## 1 (DiagnosisTD) < 0    -0.09      0.07     -0.2     0.04       6.49      0.87
+    ## 1 (DiagnosisTD) < 0    -0.08      0.08    -0.21     0.05       6.17      0.86
     ##   Star
     ## 1     
     ## ---
@@ -179,23 +123,23 @@ summary(NS_m0)
     ##  Family: gaussian 
     ##   Links: mu = identity; sigma = identity 
     ## Formula: PitchVariability ~ 1 + Diagnosis + (1 | ID) 
-    ##    Data: data (Number of observations: 1074) 
+    ##    Data: d (Number of observations: 1074) 
     ## Samples: 2 chains, each with iter = 2000; warmup = 1000; thin = 1;
     ##          total post-warmup samples = 2000
     ## 
     ## Group-Level Effects: 
     ## ~ID (Number of levels: 149) 
     ##               Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-    ## sd(Intercept)     0.64      0.03     0.58     0.71 1.00      714     1317
+    ## sd(Intercept)     0.64      0.03     0.58     0.72 1.00     1008     1234
     ## 
     ## Population-Level Effects: 
     ##             Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-    ## Intercept       0.26      0.06     0.14     0.38 1.00      657     1137
-    ## DiagnosisTD    -0.09      0.07    -0.22     0.07 1.00      966     1004
+    ## Intercept       0.26      0.07     0.12     0.39 1.00      671     1159
+    ## DiagnosisTD    -0.08      0.08    -0.23     0.07 1.00      937     1405
     ## 
     ## Family Specific Parameters: 
     ##       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-    ## sigma     0.70      0.02     0.67     0.74 1.00     3398     1506
+    ## sigma     0.71      0.02     0.67     0.74 1.00     3024     1659
     ## 
     ## Samples were drawn using sampling(NUTS). For each parameter, Bulk_ESS
     ## and Tail_ESS are effective sample size measures, and Rhat is the potential
@@ -211,31 +155,20 @@ plot(NS_m0)
 NS_m0 <- add_criterion(NS_m0, criterion = "loo", reloo = T)
 ```
 
-    ## 3 problematic observation(s) found.
-    ## The model will be refit 3 times.
+    ## No problematic observations found. Returning the original 'loo' object.
 
-    ## 
-    ## Fitting model 1 out of 3 (leaving out observation 639)
-
-    ## 
-    ## Fitting model 2 out of 3 (leaving out observation 640)
-
-    ## 
-    ## Fitting model 3 out of 3 (leaving out observation 976)
-
-    ## Start sampling
-    ## Start sampling
-    ## Start sampling
+    ## Automatically saving the model object in 'NS_m0_malate.rds'
 
 ### Step 4: Now re-run the model with the meta-analytic prior
 
 ``` r
 NS_informed_prior0 <- c(
-  prior(normal(0, .3), class = Intercept),
-  prior(normal(-0.45, .1), class = b),
+  prior(normal(.0, .3), class = Intercept),
+  prior(normal(-0.4528398, 0.1086624), class = b),
   prior(normal(0, .1), class = sd),
   prior(normal(.32, .3), class = sigma)
 )
+
 
 NS_informed_m0_pc <- brm(
   NewStudies_f0,
@@ -244,39 +177,11 @@ NS_informed_m0_pc <- brm(
   prior = NS_informed_prior0,
   sample_prior = "only",
   chains = 2,
-  cores = 2
+  cores = 2,
+  #seed = seed,
+  file="NS_in_pc"
 )
-```
 
-    ## Compiling the C++ model
-
-    ## Trying to compile a simple C file
-
-    ## Running /Library/Frameworks/R.framework/Resources/bin/R CMD SHLIB foo.c
-    ## clang -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG   -I"/Library/Frameworks/R.framework/Versions/3.6/Resources/library/Rcpp/include/"  -I"/Library/Frameworks/R.framework/Versions/3.6/Resources/library/RcppEigen/include/"  -I"/Library/Frameworks/R.framework/Versions/3.6/Resources/library/RcppEigen/include/unsupported"  -I"/Library/Frameworks/R.framework/Versions/3.6/Resources/library/BH/include" -I"/Library/Frameworks/R.framework/Versions/3.6/Resources/library/StanHeaders/include/src/"  -I"/Library/Frameworks/R.framework/Versions/3.6/Resources/library/StanHeaders/include/"  -I"/Library/Frameworks/R.framework/Versions/3.6/Resources/library/rstan/include" -DEIGEN_NO_DEBUG  -D_REENTRANT  -DBOOST_DISABLE_ASSERTS -DBOOST_PENDING_INTEGER_LOG2_HPP -include stan/math/prim/mat/fun/Eigen.hpp   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -c foo.c -o foo.o
-    ## In file included from <built-in>:1:
-    ## In file included from /Library/Frameworks/R.framework/Versions/3.6/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:13:
-    ## In file included from /Library/Frameworks/R.framework/Versions/3.6/Resources/library/RcppEigen/include/Eigen/Dense:1:
-    ## In file included from /Library/Frameworks/R.framework/Versions/3.6/Resources/library/RcppEigen/include/Eigen/Core:88:
-    ## /Library/Frameworks/R.framework/Versions/3.6/Resources/library/RcppEigen/include/Eigen/src/Core/util/Macros.h:613:1: error: unknown type name 'namespace'
-    ## namespace Eigen {
-    ## ^
-    ## /Library/Frameworks/R.framework/Versions/3.6/Resources/library/RcppEigen/include/Eigen/src/Core/util/Macros.h:613:16: error: expected ';' after top level declarator
-    ## namespace Eigen {
-    ##                ^
-    ##                ;
-    ## In file included from <built-in>:1:
-    ## In file included from /Library/Frameworks/R.framework/Versions/3.6/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:13:
-    ## In file included from /Library/Frameworks/R.framework/Versions/3.6/Resources/library/RcppEigen/include/Eigen/Dense:1:
-    ## /Library/Frameworks/R.framework/Versions/3.6/Resources/library/RcppEigen/include/Eigen/Core:96:10: fatal error: 'complex' file not found
-    ## #include <complex>
-    ##          ^~~~~~~~~
-    ## 3 errors generated.
-    ## make: *** [foo.o] Error 1
-
-    ## Start sampling
-
-``` r
 pp_check(NS_informed_m0_pc, nsamples = 100)
 ```
 
@@ -290,38 +195,11 @@ NS_informed_m0 <- brm(
   prior = NS_informed_prior0,
   sample_prior = T,
   chains = 2,
-  cores = 2
+  cores = 2,
+  #seed=seed,
+  file="NS_informed_m0_malte.rds"
 )
-```
 
-    ## Compiling the C++ model
-    ## Trying to compile a simple C file
-
-    ## Running /Library/Frameworks/R.framework/Resources/bin/R CMD SHLIB foo.c
-    ## clang -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG   -I"/Library/Frameworks/R.framework/Versions/3.6/Resources/library/Rcpp/include/"  -I"/Library/Frameworks/R.framework/Versions/3.6/Resources/library/RcppEigen/include/"  -I"/Library/Frameworks/R.framework/Versions/3.6/Resources/library/RcppEigen/include/unsupported"  -I"/Library/Frameworks/R.framework/Versions/3.6/Resources/library/BH/include" -I"/Library/Frameworks/R.framework/Versions/3.6/Resources/library/StanHeaders/include/src/"  -I"/Library/Frameworks/R.framework/Versions/3.6/Resources/library/StanHeaders/include/"  -I"/Library/Frameworks/R.framework/Versions/3.6/Resources/library/rstan/include" -DEIGEN_NO_DEBUG  -D_REENTRANT  -DBOOST_DISABLE_ASSERTS -DBOOST_PENDING_INTEGER_LOG2_HPP -include stan/math/prim/mat/fun/Eigen.hpp   -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/usr/local/include  -fPIC  -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -c foo.c -o foo.o
-    ## In file included from <built-in>:1:
-    ## In file included from /Library/Frameworks/R.framework/Versions/3.6/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:13:
-    ## In file included from /Library/Frameworks/R.framework/Versions/3.6/Resources/library/RcppEigen/include/Eigen/Dense:1:
-    ## In file included from /Library/Frameworks/R.framework/Versions/3.6/Resources/library/RcppEigen/include/Eigen/Core:88:
-    ## /Library/Frameworks/R.framework/Versions/3.6/Resources/library/RcppEigen/include/Eigen/src/Core/util/Macros.h:613:1: error: unknown type name 'namespace'
-    ## namespace Eigen {
-    ## ^
-    ## /Library/Frameworks/R.framework/Versions/3.6/Resources/library/RcppEigen/include/Eigen/src/Core/util/Macros.h:613:16: error: expected ';' after top level declarator
-    ## namespace Eigen {
-    ##                ^
-    ##                ;
-    ## In file included from <built-in>:1:
-    ## In file included from /Library/Frameworks/R.framework/Versions/3.6/Resources/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:13:
-    ## In file included from /Library/Frameworks/R.framework/Versions/3.6/Resources/library/RcppEigen/include/Eigen/Dense:1:
-    ## /Library/Frameworks/R.framework/Versions/3.6/Resources/library/RcppEigen/include/Eigen/Core:96:10: fatal error: 'complex' file not found
-    ## #include <complex>
-    ##          ^~~~~~~~~
-    ## 3 errors generated.
-    ## make: *** [foo.o] Error 1
-
-    ## Start sampling
-
-``` r
 pp_check(NS_informed_m0, nsamples = 100)
 ```
 
@@ -355,23 +233,23 @@ summary(NS_informed_m0)
     ##  Family: gaussian 
     ##   Links: mu = identity; sigma = identity 
     ## Formula: PitchVariability ~ 1 + Diagnosis + (1 | ID) 
-    ##    Data: data (Number of observations: 1074) 
+    ##    Data: d (Number of observations: 1074) 
     ## Samples: 2 chains, each with iter = 2000; warmup = 1000; thin = 1;
     ##          total post-warmup samples = 2000
     ## 
     ## Group-Level Effects: 
     ## ~ID (Number of levels: 149) 
     ##               Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-    ## sd(Intercept)     0.65      0.04     0.58     0.72 1.00      815     1225
+    ## sd(Intercept)     0.65      0.03     0.58     0.72 1.00      842     1263
     ## 
     ## Population-Level Effects: 
     ##             Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-    ## Intercept       0.38      0.07     0.25     0.52 1.00      580      974
-    ## DiagnosisTD    -0.34      0.08    -0.50    -0.19 1.00     1031     1187
+    ## Intercept       0.38      0.07     0.25     0.51 1.00      659     1046
+    ## DiagnosisTD    -0.34      0.08    -0.49    -0.19 1.00      921     1196
     ## 
     ## Family Specific Parameters: 
     ##       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-    ## sigma     0.70      0.02     0.67     0.74 1.00     3137     1492
+    ## sigma     0.70      0.02     0.67     0.74 1.00     2512     1430
     ## 
     ## Samples were drawn using sampling(NUTS). For each parameter, Bulk_ESS
     ## and Tail_ESS are effective sample size measures, and Rhat is the potential
@@ -381,29 +259,9 @@ summary(NS_informed_m0)
 NS_informed_m0 <- add_criterion(NS_informed_m0, criterion = "loo", reloo = T)
 ```
 
-    ## 5 problematic observation(s) found.
-    ## The model will be refit 5 times.
+    ## No problematic observations found. Returning the original 'loo' object.
 
-    ## 
-    ## Fitting model 1 out of 5 (leaving out observation 125)
-
-    ## 
-    ## Fitting model 2 out of 5 (leaving out observation 501)
-
-    ## 
-    ## Fitting model 3 out of 5 (leaving out observation 639)
-
-    ## 
-    ## Fitting model 4 out of 5 (leaving out observation 640)
-
-    ## 
-    ## Fitting model 5 out of 5 (leaving out observation 976)
-
-    ## Start sampling
-    ## Start sampling
-    ## Start sampling
-    ## Start sampling
-    ## Start sampling
+    ## Automatically saving the model object in 'NS_informed_m0_malte.rds'
 
 ### Step 5: Compare the models
 
@@ -418,8 +276,8 @@ loo_model_weights(NS_m0, NS_informed_m0)
     ## Method: stacking
     ## ------
     ##                weight
-    ## NS_m0          1.000 
-    ## NS_informed_m0 0.000
+    ## NS_m0          0.000 
+    ## NS_informed_m0 1.000
 
 ``` r
 plot(hypothesis(NS_m0, "DiagnosisTD < 0"))

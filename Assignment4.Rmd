@@ -16,6 +16,8 @@ knitr::opts_chunk$set(echo = TRUE)
 ### Step 1: Perform a meta-analysis of pitch variability from previous studies of voice in ASD
 
 ```{r warning=TRUE, include=FALSE}
+#set global seed
+seed = 9
 # Loading packages
 pacman::p_load(
   tidyverse, 
@@ -86,9 +88,9 @@ Meta_m0 <- brm(
   sample_prior = "only",
   chains = 2,
   cores = 2,
-  seed = 9,
-  file = "Meta_m0"
-)
+  seed = seed,
+  file="MA_pc"
+  )
 
 pp_check(Meta_m0, nsamples = 100)
 # Men dataen ser ud til at være binomial?
@@ -102,8 +104,8 @@ Meta_m1 <- brm(
   sample_prior = T,
   chains = 2,
   cores = 2,
-  seed=9,
-  file = "Meta_m1"
+  seed = seed,
+  file="MA_m0"
 )
 
 # Posterior predictive check
@@ -158,7 +160,9 @@ NS_m0_pc <- brm(
   prior = NS_prior0,
   sample_prior = "only",
   chains = 2,
-  cores = 2
+  cores = 2,
+  seed = seed,
+  file="NS_m0_pc"
 )
 
 pp_check(NS_m0_pc, nsamples=100)
@@ -170,7 +174,9 @@ NS_m0 <- brm(
   prior = NS_prior0,
   sample_prior = T,
   chains = 2,
-  cores = 2
+  cores = 2,
+  #seed = seed,
+  file="NS_m0_malate.rds"
 )
 pp_check(NS_m0, nsamples=100)
 
@@ -188,11 +194,12 @@ NS_m0 <- add_criterion(NS_m0, criterion = "loo", reloo = T)
 
 ```{r}
 NS_informed_prior0 <- c(
-  prior(normal(0, .3), class = Intercept),
-  prior(normal(-0.45, .1), class = b),
+  prior(normal(.0, .3), class = Intercept),
+  prior(normal(-0.4528398, 0.1086624), class = b),
   prior(normal(0, .1), class = sd),
   prior(normal(.32, .3), class = sigma)
 )
+
 
 NS_informed_m0_pc <- brm(
   NewStudies_f0,
@@ -201,7 +208,9 @@ NS_informed_m0_pc <- brm(
   prior = NS_informed_prior0,
   sample_prior = "only",
   chains = 2,
-  cores = 2
+  cores = 2,
+  #seed = seed,
+  file="NS_in_pc"
 )
 
 pp_check(NS_informed_m0_pc, nsamples = 100)
@@ -213,7 +222,9 @@ NS_informed_m0 <- brm(
   prior = NS_informed_prior0,
   sample_prior = T,
   chains = 2,
-  cores = 2
+  cores = 2,
+  #seed=seed,
+  file="NS_informed_m0_malte.rds"
 )
 
 pp_check(NS_informed_m0, nsamples = 100)
