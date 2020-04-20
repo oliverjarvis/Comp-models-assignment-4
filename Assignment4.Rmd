@@ -1,0 +1,238 @@
+---
+title: "Assignment 4 - Applying meta-analytic priors"
+author: "Anna Stuckert, Louise Nyholm Jensen, Malte Højmark-Berthelsen, Oliver Simon Jarvis"
+date: "20/4/2020"
+output:
+  md_document:
+    variant: markdown_github
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Assignment 4
+
+### Step 1: Perform a meta-analysis of pitch variability from previous studies of voice in ASD
+
+```{r warning=TRUE, include=FALSE}
+# Loading packages
+pacman::p_load(
+  tidyverse, 
+  metafor,
+  brms) 
+
+# Loading data
+Meta_data <- read_tsv("Ass4_MetaAnalysisData.tsv")
+
+# Tidying data (making sure the relevant variables are categorised correctly)
+Meta_data <- Meta_data %>%
+  mutate(
+    PitchVariabilityASD_Mean = as.numeric(PitchVariabilityASD_Mean),
+    PitchVariabilityTD_Mean = as.numeric(PitchVariabilityTD_Mean),
+    PitchVariabilityASD_SD = as.numeric(PitchVariabilityASD_SD),
+    PitchVariabilityTD_SD = as.numeric(PitchVariabilityTD_SD)
+  )
+
+# Only keeping the studies with data (the NA rows have no data all)
+Meta_data <- Meta_data %>%
+  subset(!is.na(Paper))
+
+# Using escalc() to calculate Effect size (cohen's d) and Standard Error (uncertainty in the Cohen's d) per each study
+Meta_data <- escalc(measure = "SMD", # Standardized mean difference
+            n1i = TD_N, # Specifying group size of TD
+            n2i = ASD_N, # Specifying group size of ASD
+            m1i = PitchVariabilityTD_Mean, # Specifying mean of TD
+            m2i = PitchVariabilityASD_Mean, # Specifying mean of ASD
+            sd1i = PitchVariabilityTD_SD, # Specidying  SD of TD
+            sd2i = PitchVariabilityASD_SD, # Specifying SD of ASD
+            data = Meta_data, # DATA
+            slab = Paper) # (Optional) - labels for the studies
+#TD to ASD difference
+
+
+# Renaming yi (effect size) and calcultting SE from vi (variance)
+Meta_data <- Meta_data %>% 
+  mutate(
+    StandardError = sqrt(vi) # Why is this not the SD (vs. SE)
+    ) %>%
+  rename(
+  EffectSize = yi
+  )
+
+# Looking at summary of the effect sizes and the standard errors
+summary(Meta_data$EffectSize)
+summary(Meta_data$StandardError)
+#Pitch variability bigger in ASD than in TD
+
+# Specifying a formula
+#Basically calculating the average
+Meta_formula <- bf(EffectSize | se(StandardError) ~ 1 + (1 | Paper))
+
+# Defining priors
+get_prior(Meta_formula, data = Meta_data, family = gaussian())
+
+Meta_prior <- c(
+  prior(normal(0, 1), class = Intercept),
+  prior(normal(0, .3), class = sd)
+)
+
+# Prior predictive check
+Meta_m0 <- brm(
+  Meta_formula,
+  data = Meta_data,
+  family = gaussian(),
+  prior = Meta_prior,
+  sample_prior = "only",
+  chains = 2,
+  cores = 2,
+  seed = 9,
+  file = "Meta_m0"
+)
+
+pp_check(Meta_m0, nsamples = 100)
+# Men dataen ser ud til at være binomial?
+
+# Fitting the model
+Meta_m1 <- brm(
+  Meta_formula,
+  data = Meta_data,
+  family = gaussian(),
+  prior = Meta_prior,
+  sample_prior = T,
+  chains = 2,
+  cores = 2,
+  seed=9,
+  file = "Meta_m1"
+)
+
+# Posterior predictive check
+pp_check(Meta_m1, nsamples = 100)
+
+# Looking at the estimates
+summary(Meta_m1)
+# RESULTS: MA effect mean = 0.43, sd = 0.1 #vs. mean = -0.43, SD = 0.09
+
+# Saving the results in variables to use later
+Meta_mean <- fixef(Meta_m1)[[1]] # Defining the effect size of intercept as the mean
+Meta_se <- fixef(Meta_m1)[[2]] # Defining the SD as mean_se (WHY SE?)
+
+Meta_heterogeneity = 0.32 # Defining the sd(Intercept) (group-level effects) as heterogeneity
+
+```
+
+### Step 2: Analyse pitch variability in ASD in two new studies for which you have access to all the trials (not just study level estimates)
+
+```{r}
+data <- read_csv("Ass4_data.csv", col_types = cols(ID = col_character()))
+
+data <- data %>% mutate(
+  PitchVariability = scale(Pitch_IQR)
+)
+
+hist(data$Pitch_IQR)
+hist(data$PitchVariability)
+#Looks shifted log normal, but gaussian is pretty close
+```
+
+### Step 3: Build a regression model predicting Pitch variability from Diagnosis.
+Using uninformed, conservative priors
+```{r}
+NewStudies_f0 <- bf(PitchVariability ~ 1 + Diagnosis + (1|ID))
+
+get_prior(NewStudies_f0, data, family = gaussian())
+
+sd(data$PitchVariability)
+
+NS_prior0 <- c(
+  prior(normal(0, .3), class = Intercept),
+  prior(normal(0, .1), class = b),
+  prior(normal(0, .1), class = sd),
+  prior(normal(.5, .3), class = sigma)
+)
+
+NS_m0_pc <- brm(
+  NewStudies_f0,
+  data,
+  family = gaussian(),
+  prior = NS_prior0,
+  sample_prior = "only",
+  chains = 2,
+  cores = 2
+)
+
+pp_check(NS_m0_pc, nsamples=100)
+
+NS_m0 <- brm(
+  NewStudies_f0,
+  data,
+  family = gaussian(),
+  prior = NS_prior0,
+  sample_prior = T,
+  chains = 2,
+  cores = 2
+)
+pp_check(NS_m0, nsamples=100)
+
+#Because we have seen in the meta analysis, that there is less variance in TD
+plot(hypothesis(NS_m0, "DiagnosisTD < 0"))
+hypothesis(NS_m0, "DiagnosisTD < 0")
+
+summary(NS_m0)
+plot(NS_m0)
+NS_m0 <- add_criterion(NS_m0, criterion = "loo", reloo = T)
+```
+
+
+### Step 4: Now re-run the model with the meta-analytic prior
+
+```{r}
+NS_informed_prior0 <- c(
+  prior(normal(0, .3), class = Intercept),
+  prior(normal(-0.45, .1), class = b),
+  prior(normal(0, .1), class = sd),
+  prior(normal(.32, .3), class = sigma)
+)
+
+NS_informed_m0_pc <- brm(
+  NewStudies_f0,
+  data,
+  family = gaussian(),
+  prior = NS_informed_prior0,
+  sample_prior = "only",
+  chains = 2,
+  cores = 2
+)
+
+pp_check(NS_informed_m0_pc, nsamples = 100)
+
+NS_informed_m0 <- brm(
+  NewStudies_f0,
+  data,
+  family = gaussian(),
+  prior = NS_informed_prior0,
+  sample_prior = T,
+  chains = 2,
+  cores = 2
+)
+
+pp_check(NS_informed_m0, nsamples = 100)
+
+plot(hypothesis(NS_informed_m0, "DiagnosisTD < 0"))
+
+hypothesis(NS_informed_m0, "DiagnosisTD < 0")
+
+summary(NS_informed_m0)
+
+NS_informed_m0 <- add_criterion(NS_informed_m0, criterion = "loo", reloo = T)
+```
+
+### Step 5: Compare the models
+
+
+```{r}
+loo_model_weights(NS_m0, NS_informed_m0)
+
+plot(hypothesis(NS_m0, "DiagnosisTD < 0"))
+plot(hypothesis(NS_informed_m0, "DiagnosisTD < 0"))
+```
