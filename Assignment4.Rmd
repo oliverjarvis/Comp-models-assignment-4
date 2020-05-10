@@ -148,8 +148,8 @@ sd(data$PitchVariability)
 
 NS_prior0 <- c(
   prior(normal(0, .3), class = Intercept),
-  prior(normal(0, .1), class = b),
-  prior(normal(0, .1), class = sd),
+  prior(normal(0, .2), class = b),
+  prior(normal(0, .2), class = sd),
   prior(normal(.5, .3), class = sigma)
 )
 
@@ -162,7 +162,7 @@ NS_m0_pc <- brm(
   chains = 2,
   cores = 2,
   seed = seed,
-  file="NS_m0_pc"
+  file="NS_m0_pc_f"
 )
 
 pp_check(NS_m0_pc, nsamples=100)
@@ -176,7 +176,7 @@ NS_m0 <- brm(
   chains = 2,
   cores = 2,
   #seed = seed,
-  file="NS_m0_malate.rds"
+  file="NS_m0_malate_f"
 )
 pp_check(NS_m0, nsamples=100)
 
@@ -193,10 +193,11 @@ NS_m0 <- add_criterion(NS_m0, criterion = "loo", reloo = T)
 ### Step 4: Now re-run the model with the meta-analytic prior
 
 ```{r}
+
 NS_informed_prior0 <- c(
   prior(normal(.0, .3), class = Intercept),
-  prior(normal(-0.4528398, 0.1086624), class = b),
-  prior(normal(0, .1), class = sd),
+  prior(normal(-0.4528398, 0.2), class = b),
+  prior(normal(0, .2), class = sd),
   prior(normal(.32, .3), class = sigma)
 )
 
@@ -210,7 +211,7 @@ NS_informed_m0_pc <- brm(
   chains = 2,
   cores = 2,
   #seed = seed,
-  file="NS_in_pc"
+  file="NS_in_pc_f"
 )
 
 pp_check(NS_informed_m0_pc, nsamples = 100)
@@ -224,7 +225,7 @@ NS_informed_m0 <- brm(
   chains = 2,
   cores = 2,
   #seed=seed,
-  file="NS_informed_m0_malte.rds"
+  file="NS_informed_m0_malte_f"
 )
 
 pp_check(NS_informed_m0, nsamples = 100)
