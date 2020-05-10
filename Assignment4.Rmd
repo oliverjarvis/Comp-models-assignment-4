@@ -244,7 +244,7 @@ NS_informed_m0 <- add_criterion(NS_informed_m0, criterion = "loo", reloo = T)
 
 ```{r}
 loo_model_weights(NS_m0, NS_informed_m0)
-
+loo_compare(NS_m0, NS_informed_m0)
 plot(hypothesis(NS_m0, "DiagnosisTD < 0"))
 plot(hypothesis(NS_informed_m0, "DiagnosisTD < 0"))
 ```

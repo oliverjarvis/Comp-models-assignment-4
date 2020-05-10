@@ -155,25 +155,7 @@ plot(NS_m0)
 NS_m0 <- add_criterion(NS_m0, criterion = "loo", reloo = T)
 ```
 
-    ## 4 problematic observation(s) found.
-    ## The model will be refit 4 times.
-
-    ## 
-    ## Fitting model 1 out of 4 (leaving out observation 125)
-
-    ## 
-    ## Fitting model 2 out of 4 (leaving out observation 639)
-
-    ## 
-    ## Fitting model 3 out of 4 (leaving out observation 640)
-
-    ## 
-    ## Fitting model 4 out of 4 (leaving out observation 770)
-
-    ## Start sampling
-    ## Start sampling
-    ## Start sampling
-    ## Start sampling
+    ## No problematic observations found. Returning the original 'loo' object.
 
     ## Automatically saving the model object in 'NS_m0_malate_f.rds'
 
@@ -277,17 +259,7 @@ summary(NS_informed_m0)
 NS_informed_m0 <- add_criterion(NS_informed_m0, criterion = "loo", reloo = T)
 ```
 
-    ## 2 problematic observation(s) found.
-    ## The model will be refit 2 times.
-
-    ## 
-    ## Fitting model 1 out of 2 (leaving out observation 244)
-
-    ## 
-    ## Fitting model 2 out of 2 (leaving out observation 640)
-
-    ## Start sampling
-    ## Start sampling
+    ## No problematic observations found. Returning the original 'loo' object.
 
     ## Automatically saving the model object in 'NS_informed_m0_malte_f.rds'
 
@@ -306,6 +278,14 @@ loo_model_weights(NS_m0, NS_informed_m0)
     ##                weight
     ## NS_m0          0.000 
     ## NS_informed_m0 1.000
+
+``` r
+loo_compare(NS_m0, NS_informed_m0)
+```
+
+    ##                elpd_diff se_diff
+    ## NS_informed_m0  0.0       0.0   
+    ## NS_m0          -1.9       1.2
 
 ``` r
 plot(hypothesis(NS_m0, "DiagnosisTD < 0"))
