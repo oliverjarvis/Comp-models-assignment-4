@@ -3,6 +3,195 @@ Assignment 4
 
 ### Step 1: Perform a meta-analysis of pitch variability from previous studies of voice in ASD
 
+``` r
+#set global seed
+seed = 9
+# Loading packages
+pacman::p_load(
+  tidyverse, 
+  metafor,
+  brms) 
+
+# Loading data
+Meta_data <- read_tsv("Ass4_MetaAnalysisData.tsv")
+```
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   .default = col_double(),
+    ##   Paper = col_character(),
+    ##   Author = col_character(),
+    ##   Population = col_character(),
+    ##   DiagnosisDetails = col_character(),
+    ##   Language = col_character(),
+    ##   Language2 = col_character(),
+    ##   Task = col_character(),
+    ##   Task2 = col_character(),
+    ##   PitchMean_Units = col_character(),
+    ##   PitchMeanASDvsTD = col_character(),
+    ##   PitchRange_Units = col_character(),
+    ##   PitchRangeASDvsTD = col_character(),
+    ##   PitchSD_Units = col_character(),
+    ##   PitchSDASDvsTD = col_character(),
+    ##   PitchVariability_Units = col_character(),
+    ##   PitchVariabilityASDvsTD = col_character(),
+    ##   IntensityMean_Units = col_character(),
+    ##   IntensityMeanASDvsTD = col_character(),
+    ##   UtteranceDurationUnit = col_character(),
+    ##   UtteranceDurationASDvsTD = col_character()
+    ##   # ... with 5 more columns
+    ## )
+
+    ## See spec(...) for full column specifications.
+
+``` r
+# Tidying data (making sure the relevant variables are categorised correctly)
+Meta_data <- Meta_data %>%
+  mutate(
+    PitchVariabilityASD_Mean = as.numeric(PitchVariabilityASD_Mean),
+    PitchVariabilityTD_Mean = as.numeric(PitchVariabilityTD_Mean),
+    PitchVariabilityASD_SD = as.numeric(PitchVariabilityASD_SD),
+    PitchVariabilityTD_SD = as.numeric(PitchVariabilityTD_SD)
+  )
+
+# Only keeping the studies with data (the NA rows have no data all)
+Meta_data <- Meta_data %>%
+  subset(!is.na(Paper))
+
+# Using escalc() to calculate Effect size (cohen's d) and Standard Error (uncertainty in the Cohen's d) per each study
+Meta_data <- escalc(measure = "SMD", # Standardized mean difference
+            n1i = TD_N, # Specifying group size of TD
+            n2i = ASD_N, # Specifying group size of ASD
+            m1i = PitchVariabilityTD_Mean, # Specifying mean of TD
+            m2i = PitchVariabilityASD_Mean, # Specifying mean of ASD
+            sd1i = PitchVariabilityTD_SD, # Specidying  SD of TD
+            sd2i = PitchVariabilityASD_SD, # Specifying SD of ASD
+            data = Meta_data, # DATA
+            slab = Paper) # (Optional) - labels for the studies
+#TD to ASD difference
+
+
+# Renaming yi (effect size) and calcultting SE from vi (variance)
+Meta_data <- Meta_data %>% 
+  mutate(
+    StandardError = sqrt(vi) # Why is this not the SD (vs. SE)
+    ) %>%
+  rename(
+  EffectSize = yi
+  )
+
+# Looking at summary of the effect sizes and the standard errors
+summary(Meta_data$EffectSize)
+```
+
+    ##     Min.  1st Qu.   Median     Mean  3rd Qu.     Max.     NA's 
+    ## -1.29110 -0.81658 -0.65338 -0.46315 -0.05907  0.52031       11
+
+``` r
+summary(Meta_data$StandardError)
+```
+
+    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+    ##  0.2211  0.3176  0.3732  0.3673  0.4243  0.4826      11
+
+``` r
+#Pitch variability bigger in ASD than in TD
+
+# Specifying a formula
+#Basically calculating the average
+Meta_formula <- bf(EffectSize | se(StandardError) ~ 1 + (1 | Paper))
+
+# Defining priors
+get_prior(Meta_formula, data = Meta_data, family = gaussian())
+```
+
+    ##                  prior     class      coef group resp dpar nlpar bound
+    ## 1 student_t(3, -1, 10) Intercept                                      
+    ## 2  student_t(3, 0, 10)        sd                                      
+    ## 3                             sd           Paper                      
+    ## 4                             sd Intercept Paper
+
+``` r
+Meta_prior <- c(
+  prior(normal(0, 1), class = Intercept),
+  prior(normal(0, .3), class = sd)
+)
+
+# Prior predictive check
+Meta_m0 <- brm(
+  Meta_formula,
+  data = Meta_data,
+  family = gaussian(),
+  prior = Meta_prior,
+  sample_prior = "only",
+  chains = 2,
+  cores = 2,
+  seed = seed,
+  file="MA_pc"
+  )
+
+pp_check(Meta_m0, nsamples = 100)
+```
+
+![](Assignment4_files/figure-markdown_github/unnamed-chunk-1-1.png)
+
+``` r
+# Men dataen ser ud til at være binomial?
+
+# Fitting the model
+Meta_m1 <- brm(
+  Meta_formula,
+  data = Meta_data,
+  family = gaussian(),
+  prior = Meta_prior,
+  sample_prior = T,
+  chains = 2,
+  cores = 2,
+  seed = seed,
+  file="MA_m0"
+)
+
+# Posterior predictive check
+pp_check(Meta_m1, nsamples = 100)
+```
+
+![](Assignment4_files/figure-markdown_github/unnamed-chunk-1-2.png)
+
+``` r
+# Looking at the estimates
+summary(Meta_m1)
+```
+
+    ##  Family: gaussian 
+    ##   Links: mu = identity; sigma = identity 
+    ## Formula: EffectSize | se(StandardError) ~ 1 + (1 | Paper) 
+    ##    Data: Meta_data (Number of observations: 30) 
+    ## Samples: 2 chains, each with iter = 2000; warmup = 1000; thin = 1;
+    ##          total post-warmup samples = 2000
+    ## 
+    ## Group-Level Effects: 
+    ## ~Paper (Number of levels: 19) 
+    ##               Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+    ## sd(Intercept)     0.35      0.10     0.16     0.55 1.00      908      779
+    ## 
+    ## Population-Level Effects: 
+    ##           Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+    ## Intercept    -0.46      0.11    -0.67    -0.25 1.00     1011     1073
+    ## 
+    ## Samples were drawn using sampling(NUTS). For each parameter, Bulk_ESS
+    ## and Tail_ESS are effective sample size measures, and Rhat is the potential
+    ## scale reduction factor on split chains (at convergence, Rhat = 1).
+
+``` r
+# RESULTS: MA effect mean = 0.43, sd = 0.1 #vs. mean = -0.43, SD = 0.09
+
+# Saving the results in variables to use later
+Meta_mean <- fixef(Meta_m1)[[1]] # Defining the effect size of intercept as the mean
+Meta_se <- fixef(Meta_m1)[[2]] # Defining the SD as mean_se (WHY SE?)
+
+Meta_heterogeneity = 0.32 # Defining the sd(Intercept) (group-level effects) as heterogeneity
+```
+
 ### Step 2: Analyse pitch variability in ASD in two new studies for which you have access to all the trials (not just study level estimates)
 
 ``` r

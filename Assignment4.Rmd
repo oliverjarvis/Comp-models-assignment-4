@@ -15,7 +15,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ### Step 1: Perform a meta-analysis of pitch variability from previous studies of voice in ASD
 
-```{r warning=TRUE, include=FALSE}
+```{r warning=FALSE}
 #set global seed
 seed = 9
 # Loading packages
